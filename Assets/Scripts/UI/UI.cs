@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UI : MonoBehaviour, ISaveManager
 {
@@ -8,6 +10,8 @@ public class UI : MonoBehaviour, ISaveManager
     [SerializeField] private UI_FadeScreen fadeScreen;
     [SerializeField] private GameObject endText;
     [SerializeField] private GameObject restartButton;
+    [SerializeField] private GameObject homeButton;
+    [SerializeField] private TextMeshProUGUI accumulatedCurrencyText;
     [Space]
 
     [SerializeField] private GameObject charcaterUI;
@@ -125,14 +129,25 @@ public class UI : MonoBehaviour, ISaveManager
 
     IEnumerator EndScreenCorutione()
     {
+        int currency = PlayerManager.instance.GetCurrency();
         yield return new WaitForSeconds(1);
         endText.SetActive(true);
+        
+        accumulatedCurrencyText.text = $"Total Souls Collected: {currency}";
+
+        accumulatedCurrencyText.gameObject.SetActive(true);
         yield return new WaitForSeconds(1.5f);
         restartButton.SetActive(true);
+        homeButton.SetActive(true);
 
     }
 
     public void RestartGameButton() => GameManager.instance.RestartScene();
+
+    public void ReturnHomeButton()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 
     public void LoadData(GameData _data)
     {

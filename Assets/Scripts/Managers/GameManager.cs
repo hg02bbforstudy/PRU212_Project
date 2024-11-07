@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour, ISaveManager
     private int enemiesToSpawn = 5;
     private float mapSize = 50f; // Size of the map
     private bool isLevelInProgress = false; // Flag to ensure enemies are not spawned continuously
+    [SerializeField] private float spawnRadius = 10f;
 
     private void Awake()
     {
@@ -51,6 +52,11 @@ public class GameManager : MonoBehaviour, ISaveManager
         {
             pausedGame = !pausedGame;
             PauseGame(pausedGame);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            SpawnEnemy();
         }
 
         // Check if level is in progress and if there are no enemies or bosses left
@@ -184,15 +190,33 @@ public class GameManager : MonoBehaviour, ISaveManager
             }
         }
 
-        isLevelInProgress = false; // Mark level as in progress after enemies are generated
+        isLevelInProgress = true; // Mark level as in progress after enemies are generated
+        StartCoroutine(SpawnEnemyOverTime()); // Start enemy spawn coroutine
+    }
+    private IEnumerator SpawnEnemyOverTime()
+    {
+        while (isLevelInProgress)
+        {
+            yield return new WaitForSeconds(5f); // Wait 10 seconds before spawning the next enemy
+            enemiesToSpawn++;
+            if (isLevelInProgress && GameObject.FindGameObjectsWithTag("Enemy").Length < enemiesToSpawn)
+            {
+                SpawnEnemy();
+            }
+        }
     }
 
     private void SpawnEnemy()
     {
+        if (player == null) return;
+
+        // Calculate a random position within a circle around the player
+        Vector2 randomPosition = Random.insideUnitCircle * spawnRadius;
+        Vector3 spawnPosition = new Vector3(player.position.x + randomPosition.x, player.position.y + randomPosition.y, 0);
+
         int randomIndex = Random.Range(0, enemyPrefabs.Length);
-        Vector3 randomPosition = new Vector3(Random.Range(-mapSize / 2, mapSize / 2), 0, 0);
-        GameObject newEnemy = Instantiate(enemyPrefabs[randomIndex], randomPosition, Quaternion.identity);
-        newEnemy.tag = "Enemy"; // Assign the "Enemy" tag to the newly created Enemy object
+        GameObject newEnemy = Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
+        newEnemy.tag = "Enemy";
     }
 
     private void SpawnBoss()
