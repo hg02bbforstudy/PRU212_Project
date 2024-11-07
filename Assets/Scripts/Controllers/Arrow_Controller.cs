@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class Arrow_Controller : MonoBehaviour
@@ -9,7 +8,6 @@ public class Arrow_Controller : MonoBehaviour
 
     [SerializeField] private int damage;
     [SerializeField] private string targetLayerName = "Player";
-
 
     [SerializeField] private float xVelocity;
     [SerializeField] private Rigidbody2D rb;
@@ -22,8 +20,8 @@ public class Arrow_Controller : MonoBehaviour
 
     private void Update()
     {
-        if(canMove)
-            rb.velocity = new Vector2(xVelocity,rb.velocity.y);
+        if (canMove)
+            rb.velocity = new Vector2(xVelocity, rb.velocity.y);
 
         if (facingDir == 1 && rb.velocity.x < 0)
         {
@@ -32,7 +30,7 @@ public class Arrow_Controller : MonoBehaviour
         }
     }
 
-    public void SetupArrow( float _speed,CharacterStats _stats)
+    public void SetupArrow(float _speed, CharacterStats _stats)
     {
         sr = GetComponent<SpriteRenderer>();
         xVelocity = _speed;
@@ -46,10 +44,7 @@ public class Arrow_Controller : MonoBehaviour
 
         if (collision.gameObject.layer == LayerMask.NameToLayer(targetLayerName))
         {
-
             //collision.GetComponent<CharacterStats>()?.TakeDamage(damage);
-
-
             stats.DoDamage(collision.GetComponent<CharacterStats>());
 
             if (targetLayerName == "Enemy")
@@ -77,7 +72,6 @@ public class Arrow_Controller : MonoBehaviour
     {
         if (flipped)
             return;
-
 
         xVelocity = xVelocity * -1;
         flipped = true;

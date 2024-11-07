@@ -34,7 +34,9 @@ public class MapSettings : ScriptableObject
 }
 
 //Custom UI for our class
+#if UNITY_EDITOR
 [CustomEditor(typeof(MapSettings))]
+
 public class MapSettings_Editor : Editor
 {
     public override void OnInspectorGUI()
@@ -103,3 +105,4 @@ public class MapSettings_Editor : Editor
             EditorUtility.SetDirty(mapLayer);
     }
 }
+#endif

@@ -198,10 +198,12 @@ public class GameManager : MonoBehaviour, ISaveManager
         while (isLevelInProgress)
         {
             yield return new WaitForSeconds(5f); // Wait 10 seconds before spawning the next enemy
-            enemiesToSpawn++;
+            //enemiesToSpawn++;
             if (isLevelInProgress && GameObject.FindGameObjectsWithTag("Enemy").Length < enemiesToSpawn)
             {
-                SpawnEnemy();
+                for (int i = 0; i < enemiesToSpawn; i++) { 
+                    SpawnEnemy();
+                }
             }
         }
     }
@@ -212,7 +214,7 @@ public class GameManager : MonoBehaviour, ISaveManager
 
         // Calculate a random position within a circle around the player
         Vector2 randomPosition = Random.insideUnitCircle * spawnRadius;
-        Vector3 spawnPosition = new Vector3(player.position.x + randomPosition.x, player.position.y + randomPosition.y, 0);
+        Vector3 spawnPosition = new Vector3(player.position.x + randomPosition.x, player.position.y + 100, 0);
 
         int randomIndex = Random.Range(0, enemyPrefabs.Length);
         GameObject newEnemy = Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);

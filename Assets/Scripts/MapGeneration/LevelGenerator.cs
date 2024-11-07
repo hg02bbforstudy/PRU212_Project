@@ -1,13 +1,12 @@
-﻿using System.Collections;
+﻿using UnityEngine; // Needed for SerializeField, ExecuteInEditMode
 using System.Collections.Generic;
-using UnityEngine;
+
 using UnityEngine.Tilemaps;
 using System.IO;
-using System;
 
 
 #if UNITY_EDITOR
-using UnityEditor;
+using UnityEditor; // Needed for Editor-related functionality
 #endif
 
 [System.Serializable]
@@ -28,7 +27,7 @@ public class LevelGenerator : MonoBehaviour
     [Tooltip("The height of each layer of the stack")]
     public int height;
 
-    [SerializeField]
+    [SerializeField] // Add SerializeField to make private fields visible in the Unity Inspector
     public List<MapSettings> mapSettings = new List<MapSettings>();
 
     List<int[,]> mapList = new List<int[,]>();
@@ -42,7 +41,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    [ExecuteInEditMode]
+    [ExecuteInEditMode] // Ensures that the method can run even in the editor
     public void GenerateMap()
     {
         ClearMap();
@@ -119,7 +118,6 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // Render subsequent maps with half the width below the first map
-        //offset.y -= height;
         offset.x = 0; // Start from the left for the second row
 
         for (int i = 1; i < mapList.Count; i++)
@@ -145,7 +143,7 @@ public class LevelGenerator : MonoBehaviour
     [System.Serializable]
     public class MapData
     {
-        public int[][][] maps; 
+        public int[][][] maps;
         public int width;
         public int height;
     }
@@ -228,6 +226,7 @@ public class LevelGenerator : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(LevelGenerator))]
 public class LevelGeneratorStackEditor : Editor
 {
@@ -248,39 +247,12 @@ public class LevelGeneratorStackEditor : Editor
         }
         if (mapEditors.Count > 0)
         {
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Map Settings", EditorStyles.boldLabel);
             for (int i = 0; i < mapEditors.Count; i++)
             {
                 mapEditors[i].OnInspectorGUI();
             }
-
-            if (GUILayout.Button("Generate"))
-            {
-                levelGen.GenerateMap();
-            }
-
-            if (GUILayout.Button("Clear"))
-            {
-                levelGen.ClearMap();
-            }
-
-            if (GUILayout.Button("Save Maps"))
-            {
-                string path = EditorUtility.SaveFilePanel("Save Maps", "", "maps.json", "json");
-                if (!string.IsNullOrEmpty(path))
-                {
-                    levelGen.SaveMaps(path);
-                }
-            }
-
-            if (GUILayout.Button("Load Maps"))
-            {
-                string path = EditorUtility.OpenFilePanel("Load Maps", "", "json");
-                if (!string.IsNullOrEmpty(path))
-                {
-                    levelGen.LoadMaps(path);
-                }
-            }
         }
     }
 }
+#endif
